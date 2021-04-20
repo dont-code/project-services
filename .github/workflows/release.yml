@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: master
+
+    - name: Set up JDK 16
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '16'
+    - name: Cache Maven repository
+      uses: actions/cache@v2
+      with:
+        path: .m2/repository # maven repository files are stored here
+        key: ${{ runner.OS }}-maven-${{ hashFiles('pom.xml') }}
+    - name: Install
+      run: |
+         git config user.name "GitHub Actions"
+         git config user.email noreply@github.com
+         git merge origin/Development
+    - name: Build
+      run: mvn -B package --file pom.xml
+    - uses: actions/upload-artifact@v2
+        # Test run screenshots only on failure
+      if: success()
+      with:
+        name: project-services-runner.jar
+        path: target/project-services-runner.jar
+    - name: Push
+      run: |
+        git commit -a -m "New version" --allow-empty
+        git push
