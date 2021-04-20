@@ -31,7 +31,7 @@ jobs:
     - name: override Mongo connection url
       uses: myci-actions/export-env-var@1
       with:
-        name: _TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION-STRING
+        name: QUARKUS_MONGODB_PROJECTS_CONNECTION-STRING
         value: "mongodb://localhost:27017"
     - name: Build with Maven
       run: mvn -B package --file pom.xml
