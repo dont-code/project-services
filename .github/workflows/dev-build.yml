@@ -28,7 +28,7 @@ jobs:
       with:
         path: .m2/repository # maven repository files are stored here
         key: ${{ runner.OS }}-maven-${{ hashFiles('pom.xml') }}
-    - name: override Mongo connection url
+    - name: Override Mongo connection url
       uses: myci-actions/export-env-var@1
       with:
         name: _TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING
