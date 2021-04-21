@@ -1,30 +1,45 @@
-# ide-services project
+![image](https://dont-code.net/assets/logo-shadow-squared.png)
+## What is it for ?
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+These services manage the dont-code projects: Saving, Loading, Searching...
+They are part of the [dont-code](https://dont-code.net) no-code / low-code platform enabling you to quickly produce your very own application.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+## What is it ?
+These services are developed in [Quarkus](https://quarkus.io) and uses a [Mongo](https://mongodb.com) database to store the project information.
 
-## Running the application in dev mode
+## How is it working ?
+Project services are just Rest Services using Quarkus RestEasy Reactive and Mongo Reactive
 
-You can run your application in dev mode that enables live coding using:
-```
-./mvnw quarkus:dev
-```
+## How to build it ?
+This project is a standard maven project:
 
-## Packaging and running the application
+1. Installing
 
-The application can be packaged using `./mvnw package`.
-It produces the `ide-services-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+   Download and Install [Maven](https://maven.org) if necessary.
 
-The application is now runnable using `java -jar target/ide-services-1.0.0-SNAPSHOT-runner.jar`.
+   Download and Install a local [Mongo database](https://mongodb.com) if you want to run tests
+   
+   - You can define environment variable `_TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING` to an existing mongodb if you want to override the default 'mongodb://localhost:27017' connection url during the test.
+   - You can define environment variable `_DEV_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING` to an existing mongodb if you want to override the default 'mongodb://localhost:27017' connection url during the development.
 
-## Creating a native executable
+2. Running tests
 
-You can create a native executable using: `./mvnw package -Pnative`.
+   `mvn test`
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+3. Building
 
-You can then execute your native executable with: `./target/ide-services-1.0.0-SNAPSHOT-runner`
+   `mvn package` to produce the Uber Jar project-services-runner.jar
+   
+4. Running in dev mode enabling lib coding
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+   `mvn quarkus:dev` to start the services
+
+   `http://localhost:8083` to access the homepage
+
+4. Running in production mode
+
+   `java -jar target/project-services-runner.jar`
+
+## Thank you
+
+This project was generated using [Quarkus io generator](https://code.quarkus.io/).
