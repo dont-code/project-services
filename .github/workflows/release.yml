@@ -29,11 +29,11 @@ jobs:
       with:
         path: .m2/repository # maven repository files are stored here
         key: ${{ runner.OS }}-maven-${{ hashFiles('pom.xml') }}
-      - name: Override Mongo connection url
-        uses: myci-actions/export-env-var@1
-        with:
-          name: _TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING
-          value: "mongodb://localhost:27017"
+    - name: Override Mongo connection url
+      uses: myci-actions/export-env-var@1
+      with:
+        name: _TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING
+        value: "mongodb://localhost:27017"
     - name: Install
       run: |
          git config user.name "GitHub Actions"
