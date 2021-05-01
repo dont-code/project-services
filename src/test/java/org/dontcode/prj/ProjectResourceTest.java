@@ -85,6 +85,7 @@ public class ProjectResourceTest extends AbstractMongoTest{
                 .body("name", Matchers.is("PrjCreated2"));
 
         Document updated = given().contentType(ContentType.JSON).accept(ContentType.JSON).body("{" +
+                "\"_id\":\""+created.getString("_id")+"\","+
                 "\"name\":\"PrjUpdated2\"," +
                 "\"creation\":\"2021-06-07\"" +
                 "}").when().put("/{prjName}","PrjCreated2").then().statusCode(HttpStatus.SC_OK)

@@ -8,6 +8,7 @@ import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,10 @@ public class ProjectResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Document> listProjects () {
-        Multi<Document> ret = getProjects().find();
+        Multi<Document> ret = getProjects().find().map(document -> {
+            changeIdToString(document);
+            return document;
+        });
         return ret;
     }
 
@@ -45,6 +49,7 @@ public class ProjectResource {
     public Uni<Response> getProject (String projectName) {
         Uni<Response> ret = getProjects().find(new Document().append("name", projectName)).toUni().map(document -> {
            if( document != null) {
+               changeIdToString(document);
                return Response.ok(document).build();
            } else {
                return Response.status(Response.Status.NOT_FOUND).build();
@@ -58,14 +63,24 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> updateProject (String projectName, Document body) {
-        Uni<Response> ret = getProjects().findOneAndReplace(new Document().append("name", projectName), body).map(document -> {
+        changeIdToObjectId(body);
+        Uni<Response> ret = getProjects().findOneAndReplace(new Document().append("_id", body.get("_id")), body).map(document -> {
             if( document != null) {
+                changeIdToString(document);
                 return Response.ok(document).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         });
         return ret;
+    }
+
+    protected void changeIdToObjectId(Document body) {
+        body.put("_id", new ObjectId(body.getString("_id")));
+    }
+
+    protected void changeIdToString(Document body) {
+        body.put("_id", body.getObjectId("_id").toHexString());
     }
 
     @DELETE
@@ -75,6 +90,7 @@ public class ProjectResource {
     public Uni<Response> deleteProject (String projectName) {
         Uni<Response> ret = getProjects().findOneAndDelete(new Document().append("name", projectName)).map(document -> {
             if( document != null) {
+                changeIdToString(document);
                 return Response.ok(document).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -88,8 +104,11 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> insertProject(Document body) {
-        System.out.println("Received"+ body);
-        return getProjects().insertOne(body).map(result -> Response.ok(body).build());
+        //System.out.println("Received"+ body);
+        return getProjects().insertOne(body).map(result -> {
+            changeIdToString(body);
+            return Response.ok(body).build();
+        });
     }
 
     protected ReactiveMongoCollection<Document> getProjects() {
