@@ -10,6 +10,7 @@ import io.smallrye.mutiny.Uni;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.resteasy.reactive.RestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 @Path("/project")
 @ApplicationScoped
@@ -34,8 +36,9 @@ public class ProjectResource {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Multi<Document> listProjects () {
-        Multi<Document> ret = getProjects().find().map(document -> {
+    public Multi<Document> listProjects (UriInfo info, @RestHeader("DbName") String dbName) {
+        log.debug("Hostname = {}, DbName Header = {}", info.getAbsolutePath(), dbName);
+        Multi<Document> ret = getProjects(dbName).find().map(document -> {
             changeIdToString(document);
             return document;
         });
@@ -46,8 +49,8 @@ public class ProjectResource {
     @Path("/{projectName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Blocking
-    public Uni<Response> getProject (String projectName) {
-        Uni<Response> ret = getProjects().find(new Document().append("name", projectName)).toUni().map(document -> {
+    public Uni<Response> getProject (String projectName, @HeaderParam("DbName") String dbName) {
+        Uni<Response> ret = getProjects(dbName).find(new Document().append("name", projectName)).toUni().map(document -> {
            if( document != null) {
                changeIdToString(document);
                return Response.ok(document).build();
@@ -62,9 +65,9 @@ public class ProjectResource {
     @Path("/{projectName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> updateProject (String projectName, Document body) {
+    public Uni<Response> updateProject (String projectName, @HeaderParam("DbName") String dbName, Document body) {
         changeIdToObjectId(body);
-        Uni<Response> ret = getProjects().findOneAndReplace(new Document().append("_id", body.get("_id")), body).map(document -> {
+        Uni<Response> ret = getProjects(dbName).findOneAndReplace(new Document().append("_id", body.get("_id")), body).map(document -> {
             if( document != null) {
                 changeIdToString(document);
                 return Response.ok(document).build();
@@ -87,8 +90,8 @@ public class ProjectResource {
     @Path("/{projectName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> deleteProject (String projectName) {
-        Uni<Response> ret = getProjects().findOneAndDelete(new Document().append("name", projectName)).map(document -> {
+    public Uni<Response> deleteProject (String projectName, @HeaderParam("DbName") String dbName) {
+        Uni<Response> ret = getProjects(dbName).findOneAndDelete(new Document().append("name", projectName)).map(document -> {
             if( document != null) {
                 changeIdToString(document);
                 return Response.ok(document).build();
@@ -103,15 +106,19 @@ public class ProjectResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> insertProject(Document body) {
+    public Uni<Response> insertProject(Document body, @HeaderParam("DbName") String dbName) {
         //System.out.println("Received"+ body);
-        return getProjects().insertOne(body).map(result -> {
+        return getProjects(dbName).insertOne(body).map(result -> {
             changeIdToString(body);
             return Response.ok(body).build();
         });
     }
 
-    protected ReactiveMongoCollection<Document> getProjects() {
+    protected ReactiveMongoCollection<Document> getProjects(String dbName) {
+        return getDatabase(dbName).getCollection("projects", Document.class);
+    }
+
+    /*protected ReactiveMongoCollection<Document> getProjects() {
         return getDatabase().getCollection("projects", Document.class);
     }
     protected <T> ReactiveMongoCollection<T> getProjects(Class<T> clazz) {
@@ -120,5 +127,10 @@ public class ProjectResource {
 
     protected ReactiveMongoDatabase getDatabase () {
         return mongoClient.getDatabase(projectDbName);
+    }*/
+
+    protected ReactiveMongoDatabase getDatabase (String dbName) {
+        if( dbName==null) dbName = projectDbName;
+        return mongoClient.getDatabase(dbName);
     }
 }
