@@ -1,4 +1,4 @@
-package org.dontcode.prj;
+package net.dontcode.prj;
 
 import io.quarkus.mongodb.MongoClientName;
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
@@ -14,12 +14,12 @@ import org.jboss.resteasy.reactive.RestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 @Path("/project")
 @ApplicationScoped
@@ -38,6 +38,20 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Document> listProjects (UriInfo info, @RestHeader("DbName") String dbName) {
         log.debug("Hostname = {}, DbName Header = {}", info.getAbsolutePath(), dbName);
+/*        Multi<Document> ret = Multi.createFrom().emitter(multiEmitter -> {
+            for (int i=0;i<100000;i++) {
+                multiEmitter.emit(Document.parse("""
+                        {
+                        "projectId":"EGFERGG",
+                        "status":"PIZZADAZRFERFERF",
+                        "data":{
+                                "value":"name"
+                            }
+                        }
+                        """));
+            }
+            multiEmitter.complete();
+        });*/
         Multi<Document> ret = getProjects(dbName).find().map(document -> {
             changeIdToString(document);
             return document;
@@ -128,6 +142,7 @@ public class ProjectResource {
     protected ReactiveMongoDatabase getDatabase () {
         return mongoClient.getDatabase(projectDbName);
     }*/
+
 
     protected ReactiveMongoDatabase getDatabase (String dbName) {
         if( dbName==null) dbName = projectDbName;
