@@ -1,8 +1,16 @@
 name: Release
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: The branch to release in test
+        required: false
+        default: Development
+        type: choice
+        options:
+          - Development
+          - main
 
 jobs:
   build:
@@ -24,22 +32,12 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
-        java-version: '16'
+        java-version: '21'
     - name: Cache Maven repository
       uses: actions/cache@v4
       with:
         path: .m2/repository # maven repository files are stored here
         key: ${{ runner.OS }}-maven-${{ hashFiles('pom.xml') }}
-    - name: Override Mongo connection url
-      uses: myci-actions/export-env-var@1
-      with:
-        name: _TEST_QUARKUS_MONGODB_PROJECTS_CONNECTION_STRING
-        value: "mongodb://localhost:27017"
-    - name: Install
-      run: |
-         git config user.name "GitHub Actions"
-         git config user.email noreply@github.com
-         git merge origin/Development
     - name: override Mongo connection url
       uses: myci-actions/export-env-var@1
       with:
@@ -53,10 +51,6 @@ jobs:
       with:
         name: project-services-runner.jar
         path: target/project-services-runner.jar
-    - name: Push
-      run: |
-        git commit -a -m "New version" --allow-empty
-        git push
     - name: Deploy to test
       uses: appleboy/scp-action@master
       with:
