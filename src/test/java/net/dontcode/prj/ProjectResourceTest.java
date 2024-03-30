@@ -1,19 +1,18 @@
-package org.dontcode.prj;
+package net.dontcode.prj;
 
 import io.quarkus.mongodb.MongoClientName;
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoCollection;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
+import jakarta.inject.Inject;
 import org.apache.http.HttpStatus;
 import org.bson.Document;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,8 +21,7 @@ import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 @TestHTTPEndpoint(ProjectResource.class)
-@TestProfile(MongoTestProfile.class)
-public class ProjectResourceTest extends AbstractMongoTest{
+public class ProjectResourceTest{
 
     @Inject
     @MongoClientName("projects")
