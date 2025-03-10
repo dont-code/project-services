@@ -1,5 +1,7 @@
 package net.dontcode.prj;
 
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.ReturnDocument;
 import io.quarkus.mongodb.MongoClientName;
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoCollection;
@@ -81,7 +83,8 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> updateProject (String projectName, @HeaderParam("DbName") String dbName, Document body) {
         changeIdToObjectId(body);
-        Uni<Response> ret = getProjects(dbName).findOneAndReplace(new Document().append("_id", body.get("_id")), body).map(document -> {
+        Uni<Response> ret = getProjects(dbName).findOneAndReplace(new Document().append("_id", body.get("_id")), body,
+                new FindOneAndReplaceOptions().upsert(false).returnDocument(ReturnDocument.AFTER)).map(document -> {
             if( document != null) {
                 changeIdToString(document);
                 return Response.ok(document).build();

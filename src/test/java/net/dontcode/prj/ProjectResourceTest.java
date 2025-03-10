@@ -90,6 +90,7 @@ public class ProjectResourceTest{
                 .body("_id", Matchers.notNullValue() )
                 .and().extract().as(Document.class);
         Assertions.assertEquals(created.get("_id"), updated.get("_id"));
+        Assertions.assertEquals("PrjUpdated2", updated.get("name"));
 
         given().accept(ContentType.JSON).when().get("/{prjName}","PrjUpdated2").then().statusCode(HttpStatus.SC_OK)
                 .body("name", Matchers.is("PrjUpdated2"))
