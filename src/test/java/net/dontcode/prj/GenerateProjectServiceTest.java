@@ -2,7 +2,7 @@ package net.dontcode.prj;
 
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import net.dontcode.prj.model.DontCodeProjectModel;
+import net.dontcode.core.project.DontCodeProjectModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +14,9 @@ public class GenerateProjectServiceTest {
 
     @Test
     public void testSimpleApplication () {
-        //DontCodeProjectModel response=service.generateProjectJson("Please create a cooking recipe application");
-        //Assertions.assertNotNull(response);
+        DontCodeProjectModel response=service.generateProjectJson("Please create a cooking recipe application");
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.content().creation().entities().length > 0);
     }
 
 }

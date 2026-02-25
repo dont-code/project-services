@@ -1,9 +1,8 @@
 package net.dontcode.prj;
 
 import dev.langchain4j.service.SystemMessage;
-import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
-import net.dontcode.prj.model.DontCodeProjectModel;
+import net.dontcode.core.project.DontCodeProjectModel;
 
 @RegisterAiService
 @SystemMessage("""
