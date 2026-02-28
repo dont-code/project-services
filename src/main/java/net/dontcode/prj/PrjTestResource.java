@@ -1,6 +1,11 @@
 package net.dontcode.prj;
 
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ManagedContext;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import net.dontcode.core.project.DontCodeProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +19,9 @@ import java.net.URI;
 @Path("/test")
 public class PrjTestResource {
     private static Logger log = LoggerFactory.getLogger(PrjTestResource.class);
+
+//    @Inject
+//    GenerateProjectService generateProjectService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -46,4 +54,25 @@ public class PrjTestResource {
                 new NewCookie(new Cookie("Test", Integer.toString(nextValue), "/", "localhost"), null,
                         60*60, false)).build());
     }
+
+/*    @GET
+    @Path("/generator")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> generator(@QueryParam("message") String message) {
+            // We create a session context just to call the session scoped service
+        ManagedContext sessionContext = null;
+        try {
+            sessionContext = Arc.requireContainer().sessionContext();
+            if (!sessionContext.isActive()) {
+                sessionContext.activate();
+            }
+            DontCodeProjectModel response=generateProjectService.generateProjectJson(message);
+            return Uni.createFrom().item(Response.ok().entity(response).build());
+
+        } finally {
+           if (sessionContext != null) {
+            sessionContext.terminate();
+           }
+        }
+    }*/
 }
