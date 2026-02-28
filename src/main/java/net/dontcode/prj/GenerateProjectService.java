@@ -2,6 +2,7 @@ package net.dontcode.prj;
 
 import dev.langchain4j.service.SystemMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
+import jakarta.enterprise.context.SessionScoped;
 import net.dontcode.core.project.DontCodeProjectModel;
 
 @RegisterAiService
@@ -14,6 +15,7 @@ import net.dontcode.core.project.DontCodeProjectModel;
         ou du type d'une autre entité.
         Optionnellement, un champ peut être une référence vers une autre entité, en ajoutant "reference" a la description avec les informations nécessaire pour faire le lien entre les deux entités.
         """)
+@SessionScoped
 public interface GenerateProjectService {
 
     DontCodeProjectModel generateProjectJson (String msg);
