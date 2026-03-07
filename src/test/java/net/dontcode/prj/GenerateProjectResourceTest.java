@@ -29,7 +29,7 @@ public class GenerateProjectResourceTest {
     public void testGeneration() throws DeploymentException, IOException, InterruptedException {
         DontCodeProjectEntities[] entities = new DontCodeProjectEntities[]{};
         Mockito.when(serviceMock.generateProjectJson(anyString())).thenReturn(
-                new DontCodeProjectModel("Test",
+                new DontCodeProjectModel("Test", "Here is the content asked.",
                         new DontCodeProjectContent(
                                 new DontCodeProjectCreation("Test App", DontCodeProjectCreationType.application, entities))));
         ClientTestSession.opened=false;

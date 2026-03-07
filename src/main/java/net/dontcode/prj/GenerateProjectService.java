@@ -14,6 +14,7 @@ import net.dontcode.core.project.DontCodeProjectModel;
         "number","string","date","time","date-time","currency","country","money-amount","eur-amount","usd-amount","image","link","rating","recurring-task","task-complete"
         ou du type d'une autre entité.
         Optionnellement, un champ peut être une référence vers une autre entité, en ajoutant "reference" a la description avec les informations nécessaire pour faire le lien entre les deux entités.
+        Tu peux mettre des commentaires ou ta réponse dans le champ "comment" à la racine du json. Elle doit être dans la même languqe que la question de l'utilisateur.
         """)
 @SessionScoped
 public interface GenerateProjectService {

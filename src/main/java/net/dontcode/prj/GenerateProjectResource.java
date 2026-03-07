@@ -2,11 +2,11 @@ package net.dontcode.prj;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.websockets.next.OnError;
 import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
-import jakarta.websocket.EncodeException;
-import net.dontcode.common.websocket.MessageEncoderDecoder;
+import jakarta.inject.Inject;
 import net.dontcode.core.project.DontCodeProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 public class GenerateProjectResource {
     private static Logger log = LoggerFactory.getLogger(GenerateProjectResource.class);
 
-    private final GenerateProjectService service;
+    @Inject
+    protected GenerateProjectService service;
 
-    public GenerateProjectResource(GenerateProjectService service) {
-        this.service = service;
+    public GenerateProjectResource() {
     }
 
 
@@ -30,6 +30,11 @@ public class GenerateProjectResource {
     @OnTextMessage()
     public String onMessage(String message) {
         return projectToString(service.generateProjectJson(message));
+    }
+
+    @OnError
+    public String onError(Throwable throwable) {
+        return throwable.getMessage();
     }
 
     protected String projectToString (DontCodeProjectModel prj) {
