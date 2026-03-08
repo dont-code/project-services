@@ -1,11 +1,11 @@
 package net.dontcode.prj;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.http.TestHTTPResource;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import jakarta.websocket.*;
-import net.dontcode.common.websocket.MessageEncoderDecoder;
-import net.dontcode.core.Message;
+import net.dontcode.prj.generate.GenerateProjectModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +14,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Vector;
 
-@QuarkusTest
-public class GenerateProjectServiceTest {
+@QuarkusIntegrationTest
+public class GenerateProjectServiceIT {
 
     @TestHTTPResource("/generate")
     URI uri;
@@ -40,11 +40,33 @@ public class GenerateProjectServiceTest {
 
             response=wsClient.waitForMessage(200);
             Assertions.assertNotNull(response);
+
+            GenerateProjectModel model=mapToProject(response);
+            Assertions.assertNotNull(model.response());
+
+            session.getBasicRemote().sendText("Change it to support images for each type of ingredients");
+            response=wsClient.waitForMessage(200);
+            Assertions.assertNotNull(response);
+
+            model=mapToProject(response);
+            Assertions.assertNotNull(model.response());
         }
 
         /*DontCodeProjectModel response=service.generateProjectJson("Please create a cooking recipe application");
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.content().creation().entities().length > 0);*/
+    }
+
+    protected GenerateProjectModel mapToProject (String response) {
+        ObjectMapper mapper = new ObjectMapper();
+        GenerateProjectModel model;
+        try {
+            model = mapper.readValue(response, GenerateProjectModel.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error decoding project", e);
+        }
+        return model;
+
     }
 
 

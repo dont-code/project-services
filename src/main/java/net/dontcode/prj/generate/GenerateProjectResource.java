@@ -1,4 +1,4 @@
-package net.dontcode.prj;
+package net.dontcode.prj.generate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +37,7 @@ public class GenerateProjectResource {
         return throwable.getMessage();
     }
 
-    protected String projectToString (DontCodeProjectModel prj) {
+    protected String projectToString (GenerateProjectModel prj) {
         ObjectMapper mapper = new ObjectMapper();
         String json = "";
         try {

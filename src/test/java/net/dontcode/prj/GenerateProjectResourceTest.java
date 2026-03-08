@@ -4,8 +4,9 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.websocket.*;
-import net.dontcode.core.Message;
 import net.dontcode.core.project.*;
+import net.dontcode.prj.generate.GenerateProjectModel;
+import net.dontcode.prj.generate.GenerateProjectService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,9 +30,11 @@ public class GenerateProjectResourceTest {
     public void testGeneration() throws DeploymentException, IOException, InterruptedException {
         DontCodeProjectEntities[] entities = new DontCodeProjectEntities[]{};
         Mockito.when(serviceMock.generateProjectJson(anyString())).thenReturn(
-                new DontCodeProjectModel("Test", "Here is the content asked.",
-                        new DontCodeProjectContent(
-                                new DontCodeProjectCreation("Test App", DontCodeProjectCreationType.application, entities))));
+                new GenerateProjectModel("Here is an application that would fit",
+                    new DontCodeProjectModel("Test", "Test application.",
+                            new DontCodeProjectContent(
+                                    new DontCodeProjectCreation("Test App", DontCodeProjectCreationType.application, entities))))
+        );
         ClientTestSession.opened=false;
         try (Session session = ContainerProvider.getWebSocketContainer().connectToServer(ClientTestSession.class, generateUri)) {
             // Wait the data to be saved in the database
