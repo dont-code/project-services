@@ -1,12 +1,12 @@
-package net.dontcode.prj;
+package net.dontcode.prj.generate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.websockets.next.OnError;
 import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
-import jakarta.websocket.EncodeException;
-import net.dontcode.common.websocket.MessageEncoderDecoder;
+import jakarta.inject.Inject;
 import net.dontcode.core.project.DontCodeProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 public class GenerateProjectResource {
     private static Logger log = LoggerFactory.getLogger(GenerateProjectResource.class);
 
-    private final GenerateProjectService service;
+    @Inject
+    protected GenerateProjectService service;
 
-    public GenerateProjectResource(GenerateProjectService service) {
-        this.service = service;
+    public GenerateProjectResource() {
     }
 
 
@@ -32,7 +32,12 @@ public class GenerateProjectResource {
         return projectToString(service.generateProjectJson(message));
     }
 
-    protected String projectToString (DontCodeProjectModel prj) {
+    @OnError
+    public String onError(Throwable throwable) {
+        return throwable.getMessage();
+    }
+
+    protected String projectToString (GenerateProjectModel prj) {
         ObjectMapper mapper = new ObjectMapper();
         String json = "";
         try {
