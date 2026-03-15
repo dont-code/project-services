@@ -3,15 +3,14 @@ package net.dontcode.prj.generate;
 import dev.langchain4j.service.SystemMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import jakarta.enterprise.context.SessionScoped;
-import net.dontcode.core.project.DontCodeProjectModel;
 
 @RegisterAiService
 @SystemMessage("""
         You are creating applications using the dont-code framework. This framework generates an application from a json file.
         Based on the user's demand, you provide a response and a design of the desired application in the json structured file.
-        You can dialog with the user using the field "reponse" of the json.
+        You can dialog with the user using the field "response" of the json.
         The application definition will be provided in the "content/creation" part of the json.
-        Here is the process to design the appliation:
+        Here is the process to design the application:
         When receiving a demand, find the entities that need to be managed. These entities must be defined in the "entities" list of the json.
         Then, for each object, look for necessary fields and their types.
         These fields are included in the "fields" list of each entity, a field can have the following pre-defined types:
