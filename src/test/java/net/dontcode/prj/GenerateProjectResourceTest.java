@@ -1,9 +1,12 @@
 package net.dontcode.prj;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.websocket.*;
+import net.dontcode.core.Message;
 import net.dontcode.core.project.*;
 import net.dontcode.prj.generate.GenerateProjectModel;
 import net.dontcode.prj.generate.GenerateProjectService;
@@ -30,7 +33,7 @@ public class GenerateProjectResourceTest {
     public void testGeneration() throws DeploymentException, IOException, InterruptedException {
         DontCodeProjectEntities[] entities = new DontCodeProjectEntities[]{};
         Mockito.when(serviceMock.generateProjectJson(anyString())).thenReturn(
-                new GenerateProjectModel("Here is an application that would fit",
+                new GenerateProjectModel("Here is an application that would fit", null,
                     new DontCodeProjectModel("Test", "Test application.",
                             new DontCodeProjectContent(
                                     new DontCodeProjectCreation("Test App", DontCodeProjectCreationType.application, entities))))
@@ -58,6 +61,10 @@ public class GenerateProjectResourceTest {
             }
 
             Assertions.assertNotNull(ClientTestSession.response);
+
+            GenerateProjectModel model=parseResponse (ClientTestSession.response);
+            Assertions.assertNotNull(model.model().name());
+
             ClientTestSession.response=null;
             session.getAsyncRemote().sendText("The application should be named Super Test").get();
 
@@ -70,12 +77,25 @@ public class GenerateProjectResourceTest {
             }
 
             Assertions.assertNotNull(ClientTestSession.response);
+            model=parseResponse (ClientTestSession.response);
+            Assertions.assertNotNull(model.model().name());
             Mockito.verify(serviceMock, Mockito.times(2)).generateProjectJson(anyString());
 
         } catch (ExecutionException e) {
             System.err.println(e.getCause().getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    private GenerateProjectModel parseResponse(String response) {
+        ObjectMapper mapper = new ObjectMapper();
+        GenerateProjectModel obj = null;
+        try {
+            obj = mapper.readValue(response, GenerateProjectModel.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException( "Cannot decode ProjectModel "+ response);
+        }
+        return obj;
     }
 
     @ClientEndpoint

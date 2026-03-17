@@ -1,8 +1,9 @@
 package net.dontcode.prj.generate;
 
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 @RegisterAiService
 @SystemMessage("""
@@ -16,10 +17,10 @@ import jakarta.enterprise.context.SessionScoped;
         These fields are included in the "fields" list of each entity, a field can have the following pre-defined types:
         "number","string","date","time","date-time","currency","country","money-amount","eur-amount","usd-amount","image","link","rating","recurring-task","task-complete"
         A field can be of the type of another entity as well.
-        Optionally, a field can reference another entity by adding "reference" to the field description and by filling all the necessaries information to link both entities. 
+        Optionally, a field can reference another entity by adding "reference" to the field description and by filling all the necessaries information to link both entities.  For now, reference type can only be "OneToMany" 
         """)
-@SessionScoped
+@RequestScoped
 public interface GenerateProjectService {
 
-    GenerateProjectModel generateProjectJson (String msg);
+    GenerateProjectModel generateProjectJson (@MemoryId String memoryId, String msg);
 }
