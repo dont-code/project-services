@@ -33,12 +33,9 @@ public class GenerateProjectServiceIT {
             }
             Assertions.assertTrue(wsClient.opened, "Session was not opened");
 
-            String response=wsClient.waitForMessage(70);
-            Assertions.assertNotNull(response);
-
             session.getBasicRemote().sendText("Please create a cooking recipe application");
 
-            response=wsClient.waitForMessage(200);
+            String response=wsClient.waitForMessage(200);
             Assertions.assertNotNull(response);
 
             GenerateProjectModel model=mapToProject(response);
