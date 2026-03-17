@@ -32,7 +32,7 @@ public class GenerateProjectResourceTest {
     @Test
     public void testGeneration() throws DeploymentException, IOException, InterruptedException {
         DontCodeProjectEntities[] entities = new DontCodeProjectEntities[]{};
-        Mockito.when(serviceMock.generateProjectJson(anyString())).thenReturn(
+        Mockito.when(serviceMock.generateProjectJson(anyString(),anyString())).thenReturn(
                 new GenerateProjectModel("Here is an application that would fit", null,
                     new DontCodeProjectModel("Test", "Test application.",
                             new DontCodeProjectContent(
@@ -79,7 +79,7 @@ public class GenerateProjectResourceTest {
             Assertions.assertNotNull(ClientTestSession.response);
             model=parseResponse (ClientTestSession.response);
             Assertions.assertNotNull(model.model().name());
-            Mockito.verify(serviceMock, Mockito.times(2)).generateProjectJson(anyString());
+            Mockito.verify(serviceMock, Mockito.times(2)).generateProjectJson(anyString(), anyString());
 
         } catch (ExecutionException e) {
             System.err.println(e.getCause().getMessage());
