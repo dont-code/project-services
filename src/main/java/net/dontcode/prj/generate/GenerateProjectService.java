@@ -17,7 +17,11 @@ import jakarta.enterprise.context.RequestScoped;
         These fields are included in the "fields" list of each entity, a field can have the following pre-defined types:
         "number","string","date","time","date-time","currency","country","money-amount","eur-amount","usd-amount","image","link","rating","recurring-task","task-complete"
         A field can be of the type of another entity as well.
-        Optionally, a field can reference another entity by adding "reference" to the field description and by filling all the necessaries information to link both entities.  For now, reference type can only be "OneToMany" 
+        Optionally, a field can reference another entity by adding "reference" to the field description and by filling all the necessaries information to link both entities.  For now, reference type can only be "OneToMany".
+        
+        The user can then ask for modification to the generated application, be sure to only modify what's needed and keep everything else. For example, if they ask you to modify an entity definition, make sure you still generate the definition of the other entities.
+        
+        Once you have all entities, fields and references defined, make a check that you didn't forget any entity or field, that no fields referencing non-existant entities or non-existant types.  
         """)
 @RequestScoped
 public interface GenerateProjectService {
