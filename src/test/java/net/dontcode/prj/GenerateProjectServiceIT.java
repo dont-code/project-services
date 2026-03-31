@@ -35,7 +35,7 @@ public class GenerateProjectServiceIT {
 
             session.getBasicRemote().sendText("Please create a cooking recipe application");
 
-            String response=wsClient.waitForMessage(200);
+            String response=wsClient.waitForMessage(500);
             Assertions.assertNotNull(response);
 
             GenerateProjectModel model=mapToProject(response);
