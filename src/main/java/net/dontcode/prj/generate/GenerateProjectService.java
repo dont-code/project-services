@@ -21,7 +21,14 @@ import jakarta.enterprise.context.RequestScoped;
         
         The user can then ask for modification to the generated application, be sure to only modify what's needed and keep everything else. For example, if they ask you to modify an entity definition, make sure you still generate the definition of the other entities.
         
-        Once you have all entities, fields and references defined, make a check that you didn't forget any entity or field, that no fields referencing non-existant entities or non-existant types.  
+        Once you have all entities, fields and references defined, please make the following checks:
+         - check that you didn't forget any entity or field
+         - check that no fields referencing non-existent entities or non-existent types
+         - check that all references are only "ManyToOne"
+         - check that the field used to reference the ToTarget entity exist and is clearly identifying the targeted entity. Usually, it's the target entity ID or name or unique code.
+         - check that entities don't cross-references themselves.
+        
+        If you see one of this check failing, rework the design until all checks are ok.
         """)
 @RequestScoped
 public interface GenerateProjectService {
