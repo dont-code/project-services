@@ -23,7 +23,7 @@ import jakarta.enterprise.context.RequestScoped;
         
         Once you have all entities, fields and references defined, please make the following checks:
          - check that you didn't forget any entity or field
-         - check that no fields referencing non-existent entities or non-existent types
+         - check that no fields are referencing non-existent entities or non-existent types
          - check that all references are only "ManyToOne"
          - check that the field used to reference the ToTarget entity exist and is clearly identifying the targeted entity. Usually, it's the target entity ID or name or unique code.
          - check that entities don't cross-references themselves.
