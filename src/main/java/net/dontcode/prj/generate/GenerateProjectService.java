@@ -19,16 +19,17 @@ import jakarta.enterprise.context.RequestScoped;
         A field can be of the type of another entity as well.
         Optionally, a field can reference another entity by adding "reference" to the field description and by filling all the necessaries information to link both entities.  For now, reference type can only be "ManyToOne".
         
-        The user can then ask for modification to the generated application, be sure to only modify what's needed and keep everything else. For example, if they ask you to modify an entity definition, make sure you still generate the definition of the other entities.
-        
         Once you have all entities, fields and references defined, please make the following checks:
          - check that you didn't forget any entity or field
          - check that no fields are referencing non-existent entities or non-existent types
          - check that all references are only "ManyToOne"
-         - check that the field used to reference the ToTarget entity exist and is clearly identifying the targeted entity. Usually, it's the target entity ID or name or unique code.
-         - check that entities don't cross-references themselves.
+         - check that the field used to reference the ToTarget entity exist and is clearly and uniquely identifying the targeted entity. Usually, it's the target entity ID or name or unique code.
+         - check that an entity referenced by another entity is not referencing it back (cross-references are not supported)
         
-        If you see one of this check failing, rework the design until all checks are ok.
+        If you see one of this check failing, modify the design until all checks are ok.
+        
+        The user can then ask for modification to the generated application, be sure to only modify what's needed and keep everything else. For example, if they ask you to modify an entity definition, make sure you still generate the definition of the other entities.
+        
         """)
 @RequestScoped
 public interface GenerateProjectService {
