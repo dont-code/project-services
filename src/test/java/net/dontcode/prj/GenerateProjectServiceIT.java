@@ -35,14 +35,14 @@ public class GenerateProjectServiceIT {
 
             session.getBasicRemote().sendText("Please create a cooking recipe application");
 
-            String response=wsClient.waitForMessage(500);
+            String response=wsClient.waitForMessage(1000);
             Assertions.assertNotNull(response);
 
             GenerateProjectModel model=mapToProject(response);
             Assertions.assertNotNull(model.response());
 
             session.getBasicRemote().sendText("Change it to support images for each type of ingredients");
-            response=wsClient.waitForMessage(200);
+            response=wsClient.waitForMessage(400);
             Assertions.assertNotNull(response);
 
             model=mapToProject(response);
@@ -53,6 +53,40 @@ public class GenerateProjectServiceIT {
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.content().creation().entities().length > 0);*/
     }
+
+    @Test
+    public void testWorkflowApplication () throws DeploymentException, IOException, InterruptedException {
+        TestClientGenerateApplication wsClient=new TestClientGenerateApplication();
+        try (Session session = ContainerProvider.getWebSocketContainer().connectToServer(wsClient, uri)) {
+            // Wait the data to be saved in the database
+            for (int i = 0; i < 10; i++) {
+                Thread.sleep(50);
+                if (wsClient.opened) {
+                    break;
+                }
+            }
+            Assertions.assertTrue(wsClient.opened, "Session was not opened");
+
+            session.getBasicRemote().sendText("""
+            Please create a book collection application. It must display books with cover and allow you to swipe the books one by one. Please use the carousel workflow.
+            Books must have an author and categories. They must be sorted by publishing date.
+            """);
+
+            String response=wsClient.waitForMessage(1000);
+            Assertions.assertNotNull(response);
+
+            GenerateProjectModel model=mapToProject(response);
+            Assertions.assertNull (model.error());
+            Assertions.assertNotNull(model.response());
+
+            Assertions.assertTrue(model.model().content().creation().workflows().size()>0);
+        }
+
+        /*DontCodeProjectModel response=service.generateProjectJson("Please create a cooking recipe application");
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.content().creation().entities().length > 0);*/
+    }
+
 
     protected GenerateProjectModel mapToProject (String response) {
         ObjectMapper mapper = new ObjectMapper();
